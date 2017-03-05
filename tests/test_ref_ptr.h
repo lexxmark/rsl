@@ -9,7 +9,7 @@ class TestRefPtr : public QObject
 public:
     Q_INVOKABLE TestRefPtr() = default;
 
-public slots:
+private Q_SLOTS:
     void test();
 };
 

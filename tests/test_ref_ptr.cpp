@@ -40,7 +40,7 @@ void TestRefPtr::test()
         }
 
         QVERIFY(guard1);
-        QVERIFY(!guard2);
+        QVERIFY(!*guard2);
 
         delete guard2;
     }
