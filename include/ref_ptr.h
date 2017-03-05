@@ -3,9 +3,32 @@
 #ifndef REF_PTR_H
 #define REF_PTR_H
 #include <assert.h>
+#include <stdexcept>
 
 namespace rsl
 {
+
+    struct ref_ptr_fail : public std::runtime_error
+    {
+        explicit ref_ptr_fail(char const* const message)
+            : std::runtime_error(message)
+        {}
+    };
+
+
+#ifdef RSL_THROW_ON_DANGLING
+    #define RSL_ON_DANGLING throw ref_ptr_fail("Some ref_ptr's are going to dangle.")
+#endif
+#ifdef RSL_ASSERT_ON_DANGLING
+    #define RSL_ON_DANGLING assert(false && "Some ref_ptr's are going to dangle.")
+#endif
+#ifdef RSL_TERMINATE_ON_DANGLING
+    #define RSL_ON_DANGLING std::terminate()
+#endif
+
+#ifndef RSL_ON_DANGLING
+    #define RSL_ON_DANGLING
+#endif
 
 #ifdef RSL_ENABLE_CHECKS
 #define RSL_EXPECT(cond) assert(cond)
@@ -20,7 +43,10 @@ namespace rsl
         ~lifetime_trackable()
         {
             if (m_ref_ptr)
+            {
+                RSL_ON_DANGLING;
                 m_ref_ptr->disconnect_chain();
+            }
         }
 
         lifetime_trackable(const lifetime_trackable&) {}
