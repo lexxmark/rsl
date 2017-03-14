@@ -2,65 +2,50 @@
 
 #ifndef REF_PTR_H
 #define REF_PTR_H
-#include <assert.h>
+
+#include "ref_ptr_def.h"
 #include <stdexcept>
 
 namespace rsl
 {
-
-    struct ref_ptr_fail : public std::runtime_error
+    struct ref_ptr_error : public std::runtime_error
     {
-        explicit ref_ptr_fail(char const* const message)
+        explicit ref_ptr_error(char const* const message)
             : std::runtime_error(message)
         {}
     };
 
-
-#ifdef RSL_THROW_ON_DANGLING
-    #define RSL_ON_DANGLING throw ref_ptr_fail("Some ref_ptr's are going to dangle.")
-#endif
-#ifdef RSL_ASSERT_ON_DANGLING
-    #define RSL_ON_DANGLING assert(false && "Some ref_ptr's are going to dangle.")
-#endif
-#ifdef RSL_TERMINATE_ON_DANGLING
-    #define RSL_ON_DANGLING std::terminate()
-#endif
-
-#ifndef RSL_ON_DANGLING
-    #define RSL_ON_DANGLING
-#endif
-
-#ifdef RSL_ENABLE_CHECKS
-#define RSL_EXPECT(cond) assert(cond)
-#else
-#define RSL_EXPECT(cond)
-#endif
-
     struct lifetime_trackable
     {
-        lifetime_trackable() = default;
+		constexpr lifetime_trackable() noexcept = default;
+		constexpr lifetime_trackable(nullptr_t) noexcept {}
 
         ~lifetime_trackable()
         {
-            if (m_ref_ptr)
-            {
-                RSL_ON_DANGLING;
-                m_ref_ptr->disconnect_chain();
-            }
+			reset();
         }
 
-        lifetime_trackable(const lifetime_trackable&) {}
-        lifetime_trackable& operator=(const lifetime_trackable&) {}
+		lifetime_trackable(const lifetime_trackable&) noexcept {}
+		lifetime_trackable& operator=(const lifetime_trackable&) noexcept { return *this; }
 
-        lifetime_trackable(lifetime_trackable&&) {}
-        lifetime_trackable& operator=(lifetime_trackable&&) {}
+		lifetime_trackable(lifetime_trackable&&) noexcept {}
+		lifetime_trackable& operator=(lifetime_trackable&&) noexcept { return *this; }
+
+		void reset() const
+		{
+			if (m_ref_ptr)
+			{
+				RSL_ON_DANGLING;
+				m_ref_ptr->disconnect_chain();
+			}
+		}
 
         struct ref_ptr_base
         {
         protected:
-            ref_ptr_base() = default;
+            constexpr ref_ptr_base() noexcept = default;
 
-            ref_ptr_base(lifetime_trackable& trackable, void* ptr)
+            ref_ptr_base(void* ptr, const lifetime_trackable& trackable)
                 : m_ptr(ptr)
             {
                 RSL_EXPECT(m_ptr);
@@ -69,7 +54,8 @@ namespace rsl
 
             ~ref_ptr_base()
             {
-                disconnect();
+				if (m_ptr)
+					disconnect();
             }
 
             ref_ptr_base(const ref_ptr_base& other)
@@ -79,7 +65,8 @@ namespace rsl
 
             ref_ptr_base& operator=(const ref_ptr_base& other)
             {
-                disconnect();
+				if (m_ptr)
+					disconnect();
                 connect(other);
                 return *this;
             }
@@ -91,14 +78,14 @@ namespace rsl
 
             ref_ptr_base& operator=(ref_ptr_base&& other)
             {
-                disconnect();
+				if (m_ptr)
+					disconnect();
                 replace(std::move(other));
                 return *this;
             }
 
             void* get() const
             {
-                RSL_EXPECT(m_ptr);
                 return m_ptr;
             }
 
@@ -118,6 +105,8 @@ namespace rsl
                 m_previous_next = &ptr_chain;
                 m_next = ptr_chain;
                 ptr_chain = this;
+				if (m_next)
+					m_next->m_previous_next = &m_next;
             }
 
             void replace(ref_ptr_base&& other)
@@ -136,13 +125,17 @@ namespace rsl
             {
                 *m_previous_next = m_next;
                 if (m_next)
-                    *m_next->m_previous_next = *m_previous_next;
+                    m_next->m_previous_next = m_previous_next;
                 m_ptr = nullptr;
+				m_previous_next = nullptr;
+				m_next = nullptr;
             }
 
             void disconnect_chain()
             {
-                if (m_next)
+				RSL_EXPECT(m_ptr);
+
+				if (m_next)
                     m_next->disconnect_chain();
                 disconnect();
             }
@@ -159,11 +152,11 @@ namespace rsl
         class ref_ptr : public ref_ptr_base
         {
         public:
-            ref_ptr() = default;
-            ref_ptr(nullptr_t) {}
+			constexpr ref_ptr() noexcept = default;
+			constexpr ref_ptr(nullptr_t) noexcept {}
 
-            ref_ptr(lifetime_trackable& trackable, T* ptr)
-                : ref_ptr_base(trackable, ptr)
+            ref_ptr(T* ptr, const lifetime_trackable& trackable)
+                : ref_ptr_base(ptr, trackable)
             {
             }
 
@@ -181,10 +174,21 @@ namespace rsl
             ref_ptr(ref_ptr&& other) = default;
             ref_ptr& operator=(ref_ptr&& other) = default;
 
-            operator bool() const
+            explicit operator bool() const noexcept
             {
                 return ref_ptr_base::get() != nullptr;
             }
+
+			typename std::add_lvalue_reference<T>::type operator*() const noexcept
+			{
+				RSL_EXPECT(get());
+				return (*get());
+			}
+
+			T* operator->() const noexcept
+			{
+				return (std::pointer_traits<T*>::pointer_to(**this));
+			}
 
             T* get() const
             {
@@ -193,24 +197,36 @@ namespace rsl
         };
 
     private:
-        ref_ptr_base* m_ref_ptr = nullptr;
+        mutable ref_ptr_base* m_ref_ptr = nullptr;
     };
 
     template <typename T>
     using ref_ptr = lifetime_trackable::ref_ptr<T>;
 
     template <typename T>
-    auto make_ref(lifetime_trackable& trackable, T* ptr)
+    auto make_ref(T* ptr, const lifetime_trackable& trackable)
     {
-        return ref_ptr<T>(trackable, ptr);
+		if (!ptr)
+			return ref_ptr<T>();
+
+        return ref_ptr<T>(ptr, trackable);
     }
 
     template <typename T>
     auto make_ref(T* ptr)
     {
-        return ref_ptr<T>(*ptr, ptr);
+        return make_ref<T>(ptr, *ptr);
     }
 
+	template <typename T>
+	auto make_ref(nullptr_t)
+	{
+		return ref_ptr<T>();
+	}
+
 } // end namespace rsl
+
+#undef RSL_ON_DANGLING
+#undef RSL_EXPECT
 
 #endif // REF_PTR_H

@@ -1,5 +1,4 @@
-build-*
-tests/*.pro.user
+tests/build/
 *.directory
 *.autosave
 *Thumbs.db
