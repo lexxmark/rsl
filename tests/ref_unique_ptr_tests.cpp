@@ -83,8 +83,3 @@ SUITE(ref_unique_ptr_tests)
 		CHECK_EQUAL(10, object[3]);
 	}
 }
-
-int main(int, const char *[])
-{
-	return UnitTest::RunAllTests();
-}

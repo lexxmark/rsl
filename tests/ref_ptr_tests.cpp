@@ -103,9 +103,28 @@ SUITE(ref_ptr_tests)
 
 		CHECK(ptr1);
 	}
-}
 
-int main(int, const char *[])
-{
-	return UnitTest::RunAllTests();
+	TEST(sub_object_test)
+	{
+		struct Object : public lifetime_trackable
+		{
+			int i = 0;
+		};
+
+		Object object;
+
+		auto ptr1 = make_ref(&object);
+		auto ptr2 = make_ref(&object.i, object);
+
+		CHECK_EQUAL(0, ptr1->i);
+		CHECK_EQUAL(0, *ptr2);
+
+		ptr1->i = 1;
+		CHECK_EQUAL(1, object.i);
+		CHECK_EQUAL(1, *ptr2);
+
+		*ptr2 = 2;
+		CHECK_EQUAL(2, object.i);
+		CHECK_EQUAL(2, ptr1->i);
+	}
 }

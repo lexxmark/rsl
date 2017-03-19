@@ -9,7 +9,7 @@
 namespace rsl
 {
 	template<class T, class Alloc = std::allocator<T>>
-	class ref_allocator
+	class ref_allocator : public Alloc
 	{
 	public:
 		typedef T value_type;
@@ -21,137 +21,115 @@ namespace rsl
 		typedef const value_type& const_reference;
 
 		typedef size_t size_type;
-		typedef ptrdiff_t difference_type;
+		typedef std::ptrdiff_t difference_type;
 
 		//typedef Alloc::propagate_on_container_move_assignment propagate_on_container_move_assignment;
 		typedef std::true_type is_always_equal;
 
-		typedef char store_type;
-
-		typedef typename Alloc::template rebind<store_type>::other store_alloc_t;
-		typedef typename Alloc::template rebind<lifetime_trackable>::other lifetime_trackable_alloc_t;
-
-		static auto get_storage_size(size_t count)
-		{
-			return sizeof(lifetime_trackable) + count * sizeof(T)
-		}
-		static auto get_storage(T* ptr)
-		{
-			auto p = (store_type*)ptr - sizeof(lifetime_trackable);
-			return p;
-		}
-
-		static auto get_lifetime_trackable(T* ptr)
-		{
-			return (lifetime_trackable*)get_storage(ptr);
-		}
-
-		static auto get_object(store_type* ptr)
-		{
-			auto p = ptr + sizeof(lifetime_trackable);
-			return (T*)p;
-		}
-
 		template<class Other>
 		struct rebind
 		{
-			typedef allocator<typename Other> other;
+			typedef ref_allocator<Other> other;
 		};
 
 		pointer address(reference val) const
 		{
-			Alloc alloc;
-			return alloc.address(val);
+			return Alloc::address(val);
 		}
 
 		const_pointer address(const_reference val) const
 		{
-			Alloc alloc;
-			return alloc.address(val);
+			return Alloc::address(val);
 		}
 
-		ref_allocator() = default;
-		ref_allocator(const ref_allocator&) = default;
-
-		template<class Other>
-		ref_allocator(const ref_allocator<Other>&)
-		{}
-
-		template<class Other>
-		ref_allocator<T>& operator=(const ref_allocator<Other>&)
+		ref_allocator()
+			: Alloc(),
+			trackable_ref(make_ref(&trackable))
 		{
+		}
+
+		ref_allocator(const ref_allocator& other)
+			: Alloc(other),
+			trackable_ref(make_ref(&other.get_trackable()))
+		{
+		}
+
+		template<class Other>
+		ref_allocator(const ref_allocator<Other>& other)
+			: Alloc(other),
+			trackable_ref(make_ref(&other.get_trackable()))
+		{
+		}
+
+		template<class Other>
+		ref_allocator<T>& operator=(const ref_allocator<Other>& other)
+		{
+			Alloc::operator=(other);
+			trackable_ref = make_ref(&other.trackable);
 			return (*this);
+		}
+
+		ref_allocator(ref_allocator&& other)
+			: Alloc(other),
+				trackable_ref(make_ref(&other.get_trackable()))
+		{
+		}
+
+		ref_allocator& operator=(ref_allocator&& other)
+		{
+			Alloc::operator=(other);
+			trackable_ref = make_ref(&other.trackable);
+			return (*this);
+		}
+
+		~ref_allocator()
+		{
 		}
 
 		void deallocate(pointer ptr, size_type count)
 		{
-			auto p = get_storage(ptr);
-
-			{
-				lifetime_trackable_alloc_t alloc;
-				alloc.destroy((lifetime_trackable*)p);
-			}
-
-			{
-				store_alloc_t alloc;
-				alloc.deallocate(p, get_storage_size(count));
-			}
+			Alloc::deallocate(ptr, count);
 		}
 
 		pointer allocate(size_type count)
 		{
-			store_type* ptr = nullptr;
-
-			{
-				store_alloc_t alloc;
-				ptr = alloc.allocate(get_storage_size(count));
-			}
-
-			{
-				lifetime_trackable_alloc_t alloc;
-				alloc.construct((lifetime_trackable*)ptr);
-			}
-
-			return get_object(ptr);
+			return Alloc::allocate(count);
 		}
 
 		pointer allocate(size_type count, const void* hint)
 		{
-			store_type* ptr = nullptr;
-
-			{
-				store_alloc_t alloc;
-				ptr = alloc.allocate(get_storage_size(count), hint);
-			}
-
-			{
-				lifetime_trackable_alloc_t alloc;
-				alloc.construct((lifetime_trackable*)ptr);
-			}
-
-			return get_object(ptr);
+			return Alloc::allocate(count);
 		}
 
-		template<class Objty,
-			class... Types>
-			void construct(Objty *ptr, Types&&... args)
+		template<class Objty, class... Types>
+		void construct(Objty *ptr, Types&&... args)
 		{
-			Alloc alloc;
-			alloc.construct(ptr, std::forward<Types>(args)...);
+			Alloc::construct(ptr, std::forward<Types>(args)...);
 		}
 
 		template<class Uty>
 		void destroy(Uty *ptr)
 		{
-			Alloc alloc;
-			alloc.destroy(ptr);
+			get_trackable().reset_range((void*)&ptr[0], (void*)&ptr[1]);
+			Alloc::destroy(ptr);
 		}
 
 		size_t max_size() const
 		{
-			Alloc alloc;
-			return alloc.max_size();
+			return Alloc::max_size();
 		}
+
+		const auto& get_trackable() const
+		{
+			if (trackable_ref)
+				return *trackable_ref;
+			else
+				return trackable;
+		}
+
+	private:
+		lifetime_trackable trackable;
+		ref_ptr<lifetime_trackable> trackable_ref;
 	};
 
 } // end namespace rsl
