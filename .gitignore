@@ -1,4 +1,4 @@
-tests/build/
+tests/build*/
 *.directory
 *.autosave
 *Thumbs.db

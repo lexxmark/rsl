@@ -4,6 +4,8 @@
 #define REF_VECTOR_H
 
 #include "ref_allocator.h"
+#include "ref_iterator.h"
+#include "ref_index.h"
 #include <vector>
 
 namespace rsl
@@ -12,18 +14,11 @@ namespace rsl
 	using vector_ref = std::vector<T, ref_allocator<T, Alloc>>;
 
 	template <class T, class Alloc = std::allocator<T>>
-	auto get_cref(const vector_ref<T, Alloc>& vector, size_t index)
+	const auto& get_trackable(const vector_ref<T, Alloc>& vector)
 	{
-		auto alloc = vector.get_allocator();
-		return make_ref(&vector[index], alloc.get_trackable());
+		return vector.get_allocator().get_trackable();
 	}
 
-	template <class T, class Alloc = std::allocator<T>>
-	auto get_ref(vector_ref<T, Alloc>& vector, size_t index)
-	{
-		auto alloc = vector.get_allocator();
-		return make_ref(&vector[index], alloc.get_trackable());
-	}
 } // end namespace rsl
 
 #endif // REF_VECTOR_H

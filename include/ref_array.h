@@ -1,9 +1,11 @@
 #pragma once
 
-#ifndef REF_UNIQUE_PTR_H
-#define REF_UNIQUE_PTR_H
+#ifndef REF_ARRAY_H
+#define REF_ARRAY_H
 
 #include "ref_ptr.h"
+#include "ref_iterator.h"
+#include "ref_index.h"
 #include <array>
 
 namespace rsl
@@ -25,16 +27,11 @@ namespace rsl
 	};
 
 	template <class T, std::size_t N>
-	auto get_ref(array_ref<T, N>& array, size_t index)
+	const auto& get_trackable(const array_ref<T, N>& array)
 	{
-		return make_ref(&array[index], array.get_trackable());
+		return array.get_trackable();
 	}
 
-	template <class T, std::size_t N>
-	auto get_cref(const array_ref<T, N>& array, size_t index)
-	{
-		return make_ref(&array[index], array.get_trackable());
-	}
 } // end namespace rsl
 
-#endif // REF_UNIQUE_PTR_H
+#endif // REF_ARRAY_H

@@ -18,8 +18,8 @@ namespace rsl
 
     struct lifetime_trackable
     {
-	lifetime_trackable() = default;
-	lifetime_trackable(std::nullptr_t) {}
+		lifetime_trackable() = default;
+		lifetime_trackable(std::nullptr_t) {}
 
         ~lifetime_trackable()
         {

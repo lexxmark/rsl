@@ -2,6 +2,7 @@
 #include <ref_array.h>
 #include <ref_vector.h>
 #include <ref_unordered_set.h>
+#include <ref_unordered_map.h>
 
 struct ComplexObject
 {
@@ -32,6 +33,28 @@ SUITE(ref_container_tests)
 		auto ptr = get_ref(a, 2);
 		CHECK_EQUAL(3, *ptr);
 		a[2] = 5;
+		CHECK_EQUAL(5, *ptr);
+	}
+
+	TEST(array_iterator_test)
+	{
+		array_ref<int, 3> a;
+		a.fill(3);
+
+		auto ptr = get_ref(a, a.begin());
+		CHECK_EQUAL(3, *ptr);
+		*ptr = 5;
+		CHECK_EQUAL(5, a[0]);
+	}
+
+	TEST(array_const_iterator_test)
+	{
+		array_ref<int, 3> a;
+		a.fill(3);
+
+		auto ptr = get_cref(a, a.cbegin()+1);
+		CHECK_EQUAL(3, *ptr);
+		a[1] = 5;
 		CHECK_EQUAL(5, *ptr);
 	}
 
@@ -102,7 +125,7 @@ SUITE(ref_container_tests)
 		CHECK(!ptr);
 	}
 
-	TEST(get_reg_vector_erase_test)
+	TEST(get_ref_vector_erase_test)
 	{
 		vector_ref<int> v(3, 0);
 
@@ -116,20 +139,89 @@ SUITE(ref_container_tests)
 
 		CHECK(ptr0);
 		CHECK(!ptr2);
+
+		v.shrink_to_fit();
+
+		CHECK(!ptr0);
 	}
 
-	TEST(unordered_set_test)
+	TEST(vector_iterator_test)
+	{
+		vector_ref<int> v(3, 0);
+
+		auto ptr0 = get_ref(v, v.begin());
+		CHECK_EQUAL(0, *ptr0);
+
+		auto ptr2 = get_ref(v, v.begin() + 2);
+		CHECK_EQUAL(0, *ptr2);
+
+		v.erase(v.begin() + 2);
+
+		CHECK(ptr0);
+		CHECK(!ptr2);
+
+		v.shrink_to_fit();
+
+		CHECK(!ptr0);
+	}
+
+	TEST(unordered_set_get_ref_test)
 	{
 		unordered_set_ref<int> set;
 
 		set.insert(3);
 
-		auto ptr = get_ref(set, 3);
+		auto ptr = get_ref(set, set.find(3));
 		CHECK(ptr);
 		CHECK_EQUAL(3, *ptr);
 
 		set.erase(3);
 		CHECK(set.empty());
+		CHECK(!ptr);
+	}
+
+	TEST(unordered_set_find_ref_test)
+	{
+		unordered_set_ref<int> set;
+
+		set.insert(3);
+
+		auto ptr = find_ref(set, 3);
+		CHECK(ptr);
+		CHECK_EQUAL(3, *ptr);
+
+		set.erase(3);
+		CHECK(set.empty());
+		CHECK(!ptr);
+	}
+
+	TEST(unordered_map_get_ref_test)
+	{
+		unordered_map_ref<int, char> map;
+
+		map[2] = '3';
+
+		auto ptr = get_ref(map, map.find(2));
+		CHECK(ptr);
+		CHECK_EQUAL('3', ptr->second);
+
+		map.erase(2);
+		CHECK(map.empty());
+		CHECK(!ptr);
+	}
+
+	TEST(unordered_map_find_ref_test)
+	{
+		unordered_map_ref<int, char> map;
+
+		map[2] = '3';
+
+		auto ptr = find_ref(map, 2);
+		CHECK(ptr);
+		CHECK_EQUAL('3', ptr->second);
+
+		map.erase(2);
+		CHECK(map.empty());
 		CHECK(!ptr);
 	}
 }
