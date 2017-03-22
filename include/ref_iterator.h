@@ -10,7 +10,7 @@ namespace rsl
 	template <class Container_t>
 	auto get_cref(const Container_t& container, typename Container_t::const_iterator it)
 	{
-		RSL_EXPECT(it != std::cend(container));
+		RSL_EXPECT(it != std::end(container));
 		return make_ref(&(*it), get_trackable(container));
 	}
 
@@ -25,7 +25,7 @@ namespace rsl
 	auto find_cref(const Container_t& container, const typename Container_t::key_type& key)
 	{
 		auto it = container.find(key);
-		RSL_EXPECT(it != std::cend(container));
+		RSL_EXPECT(it != std::end(container));
 		return make_ref(&(*it), get_trackable(container));
 	}
 
