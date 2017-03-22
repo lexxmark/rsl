@@ -110,7 +110,8 @@ namespace rsl
 		template<class Uty>
 		void destroy(Uty *ptr)
 		{
-			get_trackable().reset_range((void*)&ptr[0], (void*)&ptr[1]);
+			using namespace details;
+			get_trackable().reset_range(cast_to_void(&ptr[0]), cast_to_void(&ptr[1]));
 			Alloc::destroy(ptr);
 		}
 

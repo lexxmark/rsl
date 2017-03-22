@@ -16,6 +16,15 @@ namespace rsl
         {}
     };
 
+	namespace details
+	{
+		template <class T>
+		inline void* cast_to_void(T* ptr)
+		{
+			return const_cast<void*>(reinterpret_cast<const void*>(ptr));
+		}
+	}
+
     struct lifetime_trackable
     {
 		lifetime_trackable() = default;
@@ -191,7 +200,7 @@ namespace rsl
 		ref_ptr(std::nullptr_t) {}
 
             ref_ptr(T* ptr, const lifetime_trackable& trackable)
-                : ref_ptr_base((void*)ptr, trackable)
+                : ref_ptr_base(details::cast_to_void(ptr), trackable)
             {
             }
 
@@ -203,7 +212,7 @@ namespace rsl
 
 			template <typename U>
 			ref_ptr(T* ptr, const ref_ptr<U>& other)
-				: ref_ptr_base((void*)ptr, other)
+				: ref_ptr_base(details::cast_to_void(ptr), other)
 			{
 			}
 			
