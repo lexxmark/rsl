@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.7)
 
-project(ref_ptr_tests CXX)
+project(rsl_tests CXX)
 
 add_subdirectory(unittest-cpp)
 
@@ -33,9 +33,9 @@ endif()
 
 add_executable(rsl_tests
 	main.cpp
-	ref_ptr_tests.cpp
-	ref_unique_ptr_tests.cpp
-	ref_container_tests.cpp
+	track_ptr_tests.cpp
+	track_unique_ptr_tests.cpp
+	track_container_tests.cpp
 )
 
 target_link_libraries(rsl_tests UnitTest++)

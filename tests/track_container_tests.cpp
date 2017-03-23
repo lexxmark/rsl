@@ -1,8 +1,8 @@
 #include <UnitTest++/UnitTest++.h>
-#include <ref_array.h>
-#include <ref_vector.h>
-#include <ref_unordered_set.h>
-#include <ref_unordered_map.h>
+#include <track/array.h>
+#include <track/vector.h>
+#include <track/unordered_set.h>
+#include <track/unordered_map.h>
 
 struct ComplexObject
 {
@@ -12,25 +12,25 @@ struct ComplexObject
 
 SUITE(ref_container_tests)
 {
-	using namespace rsl;
+	using namespace rsl::track;
 	
-	TEST(get_ref_array_test)
+	TEST(get_ptr_array_test)
 	{
-		array_ref<int, 3> a;
+		array<int, 3> a;
 		a.fill(3);
 
-		auto ptr = get_ref(a, 0);
+		auto ptr = get_ptr(a, 0);
 		CHECK_EQUAL(3, *ptr);
 		*ptr = 5;
 		CHECK_EQUAL(5, a[0]);
 	}
 
-	TEST(get_cref_array_test)
+	TEST(cget_ptr_array_test)
 	{
-		array_ref<int, 3> a;
+		array<int, 3> a;
 		a.fill(3);
 
-		auto ptr = get_ref(a, 2);
+		auto ptr = get_ptr(a, 2);
 		CHECK_EQUAL(3, *ptr);
 		a[2] = 5;
 		CHECK_EQUAL(5, *ptr);
@@ -38,10 +38,10 @@ SUITE(ref_container_tests)
 
 	TEST(array_iterator_test)
 	{
-		array_ref<int, 3> a;
+		array<int, 3> a;
 		a.fill(3);
 
-		auto ptr = get_ref(a, a.begin());
+		auto ptr = get_ptr(a, a.begin());
 		CHECK_EQUAL(3, *ptr);
 		*ptr = 5;
 		CHECK_EQUAL(5, a[0]);
@@ -49,10 +49,10 @@ SUITE(ref_container_tests)
 
 	TEST(array_const_iterator_test)
 	{
-		array_ref<int, 3> a;
+		array<int, 3> a;
 		a.fill(3);
 
-		auto ptr = get_cref(a, a.cbegin()+1);
+		auto ptr = cget_ptr(a, a.cbegin()+1);
 		CHECK_EQUAL(3, *ptr);
 		a[1] = 5;
 		CHECK_EQUAL(5, *ptr);
@@ -60,10 +60,10 @@ SUITE(ref_container_tests)
 
 	TEST(destroy_array_test)
 	{
-		auto a = std::make_unique<array_ref<int, 3>>();
+		auto a = std::make_unique<array<int, 3>>();
 		a->fill(3);
 
-		auto ptr = get_ref(*a, 2);
+		auto ptr = get_ptr(*a, 2);
 		CHECK_EQUAL(3, *ptr);
 		a->at(2) = 5;
 		CHECK_EQUAL(5, *ptr);
@@ -75,13 +75,13 @@ SUITE(ref_container_tests)
 
 	TEST(complex_array_test)
 	{
-		array_ref<ComplexObject, 3> a;
+		array<ComplexObject, 3> a;
 
-		auto ptr = get_ref(a, 2);
+		auto ptr = get_ptr(a, 2);
 		CHECK_EQUAL(0, ptr->i);
 		CHECK_EQUAL("test", ptr->s);
 
-		auto ptr2 = make_ref(&ptr->i, ptr);
+		auto ptr2 = make_ptr(&ptr->i, ptr);
 		CHECK_EQUAL(0, *ptr2);
 
 		ptr->i = 2;
@@ -93,31 +93,31 @@ SUITE(ref_container_tests)
 		CHECK_EQUAL(4, ptr->i);
 	}
 
-	TEST(get_ref_vector_test)
+	TEST(get_ptr_vector_test)
 	{
-		vector_ref<int> v(3, 0);
+		vector<int> v(3, 0);
 
-		auto ptr = get_ref(v, 0);
+		auto ptr = get_ptr(v, 0);
 		CHECK_EQUAL(0, *ptr);
 		*ptr = 3;
 		CHECK_EQUAL(3, v[0]);
 	}
 
-	TEST(get_cref_vector_test)
+	TEST(cget_ptr_vector_test)
 	{
-		vector_ref<int> v(3, 0);
+		vector<int> v(3, 0);
 
-		auto ptr = get_cref(v, 0);
+		auto ptr = cget_ptr(v, 0);
 		CHECK_EQUAL(0, *ptr);
 		v[0] = 3;
 		CHECK_EQUAL(3, *ptr);
 	}
 
-	TEST(get_reg_vector_clear_test)
+	TEST(get_ptr_vector_clear_test)
 	{
-		vector_ref<int> v(3, 0);
+		vector<int> v(3, 0);
 
-		auto ptr = get_ref(v, 0);
+		auto ptr = get_ptr(v, 0);
 		CHECK_EQUAL(0, *ptr);
 
 		v.clear();
@@ -125,14 +125,14 @@ SUITE(ref_container_tests)
 		CHECK(!ptr);
 	}
 
-	TEST(get_ref_vector_erase_test)
+	TEST(get_ptr_vector_erase_test)
 	{
-		vector_ref<int> v(3, 0);
+		vector<int> v(3, 0);
 
-		auto ptr0 = get_ref(v, 0);
+		auto ptr0 = get_ptr(v, 0);
 		CHECK_EQUAL(0, *ptr0);
 
-		auto ptr2 = get_ref(v, 2);
+		auto ptr2 = get_ptr(v, 2);
 		CHECK_EQUAL(0, *ptr2);
 
 		v.erase(v.begin() + 2);
@@ -147,12 +147,12 @@ SUITE(ref_container_tests)
 
 	TEST(vector_iterator_test)
 	{
-		vector_ref<int> v(3, 0);
+		vector<int> v(3, 0);
 
-		auto ptr0 = get_ref(v, v.begin());
+		auto ptr0 = get_ptr(v, v.begin());
 		CHECK_EQUAL(0, *ptr0);
 
-		auto ptr2 = get_ref(v, v.begin() + 2);
+		auto ptr2 = get_ptr(v, v.begin() + 2);
 		CHECK_EQUAL(0, *ptr2);
 
 		v.erase(v.begin() + 2);
@@ -165,13 +165,13 @@ SUITE(ref_container_tests)
 		CHECK(!ptr0);
 	}
 
-	TEST(unordered_set_get_ref_test)
+	TEST(unordered_set_get_ptr_test)
 	{
-		unordered_set_ref<int> set;
+		unordered_set<int> set;
 
 		set.insert(3);
 
-		auto ptr = get_ref(set, set.find(3));
+		auto ptr = get_ptr(set, set.find(3));
 		CHECK(ptr);
 		CHECK_EQUAL(3, *ptr);
 
@@ -180,13 +180,13 @@ SUITE(ref_container_tests)
 		CHECK(!ptr);
 	}
 
-	TEST(unordered_set_find_ref_test)
+	TEST(unordered_set_find_ptr_test)
 	{
-		unordered_set_ref<int> set;
+		unordered_set<int> set;
 
 		set.insert(3);
 
-		auto ptr = find_ref(set, 3);
+		auto ptr = find_ptr(set, 3);
 		CHECK(ptr);
 		CHECK_EQUAL(3, *ptr);
 
@@ -195,13 +195,13 @@ SUITE(ref_container_tests)
 		CHECK(!ptr);
 	}
 
-	TEST(unordered_map_get_ref_test)
+	TEST(unordered_map_get_ptr_test)
 	{
-		unordered_map_ref<int, char> map;
+		unordered_map<int, char> map;
 
 		map[2] = '3';
 
-		auto ptr = get_ref(map, map.find(2));
+		auto ptr = get_ptr(map, map.find(2));
 		CHECK(ptr);
 		CHECK_EQUAL('3', ptr->second);
 
@@ -210,13 +210,13 @@ SUITE(ref_container_tests)
 		CHECK(!ptr);
 	}
 
-	TEST(unordered_map_find_ref_test)
+	TEST(unordered_map_find_ptr_test)
 	{
-		unordered_map_ref<int, char> map;
+		unordered_map<int, char> map;
 
 		map[2] = '3';
 
-		auto ptr = find_ref(map, 2);
+		auto ptr = find_ptr(map, 2);
 		CHECK(ptr);
 		CHECK_EQUAL('3', ptr->second);
 
