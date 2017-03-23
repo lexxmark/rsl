@@ -4,7 +4,6 @@
 #define TRACK_PTR_H
 
 #include "../rsl_def.h"
-#include <stdexcept>
 #include <memory>
 
 namespace rsl

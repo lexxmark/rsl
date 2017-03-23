@@ -3,6 +3,8 @@
 #ifndef REF_PTR_DEF_H
 #define REF_PTR_DEF_H
 
+#include <stdexcept>
+
 #ifdef RSL_ASSERT_ON_DANGLING
     #include <assert.h>
     #define RSL_ON_DANGLING assert(false && "Some ref_ptr's are going to dangle.")
