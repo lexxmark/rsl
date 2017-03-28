@@ -43,6 +43,11 @@ namespace rsl
 			protected:
 				pointer_base() = default;
 
+				virtual ~pointer_base()
+				{
+					disconnect();
+				}
+
 				pointer_base(const trackable& trackable_object)
 				{
 					connect(trackable_object.m_ptr);
@@ -77,11 +82,6 @@ namespace rsl
 				virtual bool on_dangle_impl(void* ptr_begin, void* ptr_end) = 0;
 
 			private:
-				~pointer_base()
-				{
-					disconnect();
-				}
-				
 				void connect(const pointer_base& other)
 				{
 					RSL_EXPECT(!(m_next || m_previous_next));
@@ -274,8 +274,8 @@ namespace rsl
 			mutable pointer_base* m_ptr = nullptr;
 		};
 
-		template <typename T, typename NullPtrPolicy = NULL_PTR_POLICY_DEFAULT(T), typename OnDanglePolicy = ON_DANGLE_POLICY_DEFAULT(T)>
-		using pointer = trackable::pointer<T, NullPtrPolicy, OnDanglePolicy>;
+		template <typename T>
+		using pointer = trackable::pointer<T, NULL_PTR_POLICY_DEFAULT(T), ON_DANGLE_POLICY_DEFAULT(T)>;
 
 		template <typename T>
 		pointer<T> make_ptr(T* ptr, const trackable& trackable_object)
