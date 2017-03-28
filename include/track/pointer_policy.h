@@ -20,7 +20,7 @@ namespace rsl
 			template <typename U>
 			static void on_assign(U ptr)
 			{
-				static_assert(!std::is_same<U, nullptr_t>::value, "nullptr is forbidden");
+				static_assert(!std::is_same<U, std::nullptr_t>::value, "nullptr is forbidden");
 				RSL_EXPECT(ptr != nullptr);
 			}
 		};
