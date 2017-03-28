@@ -129,8 +129,8 @@ namespace rsl
 			}
 
 		private:
-			template <typename T>
-			using alloc_pointer = track::pointer<T, may_be_null<T>, null_on_dangle<T>>;
+			template <typename U>
+			using alloc_pointer = track::pointer<U, may_be_null<U>, null_on_dangle<U>>;
 			trackable m_trackable;
 			alloc_pointer<const trackable> m_trackable_ptr;
 		};
