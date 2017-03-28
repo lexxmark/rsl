@@ -18,7 +18,7 @@ namespace rsl
 		struct not_null
 		{
 			static void on_assign(T* ptr) { RSL_EXPECT(ptr != nullptr); }
-			static void on_assign(nullptr_t) { static_assert(false, "nullptr is forbidden"); }
+			static void on_assign(std::nullptr_t) { static_assert(false, "nullptr is forbidden"); }
 		};
 
 		template <typename T>

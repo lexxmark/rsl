@@ -48,11 +48,6 @@ namespace rsl
 					connect(trackable_object.m_ptr);
 				}
 
-				~pointer_base()
-				{
-					disconnect();
-				}
-
 				pointer_base(const pointer_base& other)
 				{
 					connect(other);
@@ -82,6 +77,11 @@ namespace rsl
 				virtual bool on_dangle_impl(void* ptr_begin, void* ptr_end) = 0;
 
 			private:
+				~pointer_base()
+				{
+					disconnect();
+				}
+				
 				void connect(const pointer_base& other)
 				{
 					RSL_EXPECT(!(m_next || m_previous_next));
@@ -216,7 +216,7 @@ namespace rsl
 					return *this;
 				}
 
-				pointer& operator=(nullptr_t)
+				pointer& operator=(std::nullptr_t)
 				{
 					*this = pointer<T>();
 					on_assign(nullptr);
