@@ -4,28 +4,9 @@
 #define REF_PTR_DEF_H
 
 #include <stdexcept>
-
-#ifdef RSL_ASSERT_ON_DANGLING
-    #include <assert.h>
-    #define RSL_ON_DANGLING assert(false && "Some ref_ptr's are going to dangle.")
-#endif
-#ifdef RSL_THROW_ON_DANGLING
-    #define RSL_ON_DANGLING throw rsl::rsl_error("Some ref_ptr's are going to dangle.")
-#endif
-#ifdef RSL_TERMINATE_ON_DANGLING
-    #define RSL_ON_DANGLING std::terminate()
-#endif
-#ifdef RSL_CUSTOM_ACTION_ON_DANGLING
-    #define RSL_ON_DANGLING { RSL_CUSTOM_ACTION_ON_DANGLING; }
-#endif
-#ifndef RSL_ON_DANGLING
-    #define RSL_ON_DANGLING
-#endif
+#include <assert.h>
 
 #ifdef RSL_ASSERT_ON_EXPECT
-    #ifndef RSL_ASSERT_ON_DANGLING
-        #include <assert.h>
-    #endif
     #define RSL_EXPECT(cond) assert(cond)
 #endif
 #ifdef RSL_THROW_ON_EXPECT

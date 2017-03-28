@@ -12,6 +12,7 @@ SUITE(track_ptr_tests)
 		{
 			auto p = make_ptr(&object);
 			CHECK(p);
+			CHECK_EQUAL(4*sizeof(void*), sizeof(p));
 		}
 	}
 
