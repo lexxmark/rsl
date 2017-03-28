@@ -130,7 +130,7 @@ namespace rsl
 
 		private:
 			template <typename T>
-			using alloc_pointer = trackable::pointer<T, may_be_null<T>, null_on_dangle<T>>;
+			using alloc_pointer = track::pointer<T, may_be_null<T>, null_on_dangle<T>>;
 			trackable m_trackable;
 			alloc_pointer<const trackable> m_trackable_ptr;
 		};
