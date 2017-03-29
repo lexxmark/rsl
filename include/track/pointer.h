@@ -274,7 +274,7 @@ namespace rsl
 			mutable pointer_base* m_ptr = nullptr;
 		};
 
-		template <typename T, typename NullPtrPolicy = NULL_PTR_POLICY_DEFAULT(T), typename OnDanglePolicy = ON_DANGLE_POLICY_DEFAULT(T)>
+		template <typename T, typename NullPtrPolicy = RSL_NULL_PTR_POLICY_DEFAULT(T), typename OnDanglePolicy = RSL_ON_DANGLE_POLICY_DEFAULT(T)>
 		using pointer = trackable::pointer<T, NullPtrPolicy, OnDanglePolicy>;
 
 		template <typename T>

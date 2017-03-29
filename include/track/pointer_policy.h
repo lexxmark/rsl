@@ -36,14 +36,20 @@ namespace rsl
 			static void on_dangle(T*) { assert(false && "pointer is going to dangle"); }
 		};
 		template <typename T>
-		struct throw_on_dangle
+		struct terminate_on_dangle
 		{
-			static void on_dangle(T*) { throw rsl::rsl_error("pointer is going to dangle"); }
+			static void on_dangle(T*) { std::terminate(); }
 		};
 
-#define NULL_PTR_POLICY_DEFAULT(T) may_be_null<T>
-#define ON_DANGLE_POLICY_DEFAULT(T) null_on_dangle<T>
 	} // end namespace track
 } // end namespace rsl
+
+#ifndef RSL_NULL_PTR_POLICY_DEFAULT
+#define RSL_NULL_PTR_POLICY_DEFAULT(T) rsl::track::may_be_null<T>
+#endif
+
+#ifndef RSL_ON_DANGLE_POLICY_DEFAULT
+#define RSL_ON_DANGLE_POLICY_DEFAULT(T) rsl::track::null_on_dangle<T>
+#endif
 
 #endif // TRACK_PTR_POLICY_H

@@ -1,4 +1,7 @@
 #include <UnitTest++/UnitTest++.h>
+
+#define RSL_NULL_PTR_POLICY_DEFAULT(T) rsl::track::may_be_null<T>
+#define RSL_ON_DANGLE_POLICY_DEFAULT(T) rsl::track::null_on_dangle<T>
 #include <track/pointer.h>
 
 SUITE(track_ptr_tests)
