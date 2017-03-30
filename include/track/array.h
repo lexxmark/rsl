@@ -22,14 +22,14 @@ namespace rsl
             using array_type::operator[];
             using array_type::operator=;
 
-            const auto& get_trackable() const { return m_trackable; }
+            const trackable& get_trackable() const { return m_trackable; }
 
         private:
             trackable m_trackable;
         };
 
         template <class T, std::size_t N>
-        const auto& get_trackable(const array<T, N>& arr)
+        const trackable& get_trackable(const array<T, N>& arr)
         {
             return arr.get_trackable();
         }

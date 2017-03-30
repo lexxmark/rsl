@@ -16,7 +16,7 @@ namespace rsl
         using deque = std::deque<T, allocator<T, Alloc>>;
 
         template <class T, class Alloc = std::allocator<T>>
-        const auto& get_trackable(const deque<T, Alloc>& d)
+        const trackable& get_trackable(const deque<T, Alloc>& d)
         {
             return d.get_allocator().get_trackable();
         }

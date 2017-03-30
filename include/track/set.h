@@ -15,7 +15,7 @@ namespace rsl
         using set = std::set<K, Pr, allocator<K, Alloc>>;
 
         template <class K, class Pr = std::less<K>, class Alloc = std::allocator<K>>
-        const auto& get_trackable(const set<K, Pr, Alloc>& s)
+        const trackable& get_trackable(const set<K, Pr, Alloc>& s)
         {
             return s.get_allocator().get_trackable();
         }

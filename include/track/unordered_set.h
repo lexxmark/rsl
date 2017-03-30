@@ -15,7 +15,7 @@ namespace rsl
 		using unordered_set = std::unordered_set<K, Hasher, Keyeq, allocator<K, Alloc>>;
 
 		template <class K, class Hasher = std::hash<K>, class Keyeq = std::equal_to<K>, class Alloc = std::allocator<K>>
-		const auto& get_trackable(const unordered_set<K, Hasher, Keyeq, Alloc>& set)
+		const trackable& get_trackable(const unordered_set<K, Hasher, Keyeq, Alloc>& set)
 		{
 			return set.get_allocator().get_trackable();
 		}

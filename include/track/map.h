@@ -15,7 +15,7 @@ namespace rsl
         using map = std::map<K, T, Pr, allocator<std::pair<const K, T>, Alloc>>;
 
         template <class K, class T, class Pr = std::less<K>, class Alloc = std::allocator<std::pair<const K, T>>>
-        const auto& get_trackable(const map<K, T, Pr, Alloc>& m)
+        const trackable& get_trackable(const map<K, T, Pr, Alloc>& m)
         {
             return m.get_allocator().get_trackable();
         }

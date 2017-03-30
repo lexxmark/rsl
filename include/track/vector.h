@@ -16,7 +16,7 @@ namespace rsl
 		using vector = std::vector<T, allocator<T, Alloc>>;
 
 		template <class T, class Alloc = std::allocator<T>>
-		const auto& get_trackable(const vector<T, Alloc>& vec)
+		const trackable& get_trackable(const vector<T, Alloc>& vec)
 		{
 			return vec.get_allocator().get_trackable();
 		}
