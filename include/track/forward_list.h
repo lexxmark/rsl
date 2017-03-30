@@ -16,7 +16,7 @@ namespace rsl
 		using forward_list = std::forward_list<T, allocator<T, Alloc>>;
 
 		template <class T, class Alloc = std::allocator<T>>
-		const auto& get_trackable(const forward_list<T, Alloc>& lst)
+		const trackable& get_trackable(const forward_list<T, Alloc>& lst)
 		{
 			return lst.get_allocator().get_trackable();
 		}
