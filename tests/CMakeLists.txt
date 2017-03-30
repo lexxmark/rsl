@@ -33,9 +33,17 @@ endif()
 
 add_executable(rsl_tests
 	main.cpp
-	track_ptr_tests.cpp
-	track_unique_ptr_tests.cpp
-	track_container_tests.cpp
+    track/pointer.cpp
+    track/array.cpp
+    track/deque.cpp
+    track/forward_list.cpp
+    track/list.cpp
+    track/map.cpp
+    track/set.cpp
+    track/unique_ptr.cpp
+    track/unordered_map.cpp
+    track/unordered_set.cpp
+    track/vector.cpp
 )
 
 target_link_libraries(rsl_tests UnitTest++)

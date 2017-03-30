@@ -4,6 +4,7 @@
 #define TRACK_UNORDERED_MAP_H
 
 #include "allocator.h"
+#include "iterator.h"
 #include <unordered_map>
 
 namespace rsl

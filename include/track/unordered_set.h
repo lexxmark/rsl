@@ -4,6 +4,7 @@
 #define TRACK_UNORDERED_SET_H
 
 #include "allocator.h"
+#include "iterator.h"
 #include <unordered_set>
 
 namespace rsl

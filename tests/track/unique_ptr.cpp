@@ -1,7 +1,7 @@
 #include <UnitTest++/UnitTest++.h>
 #include <track/unique_ptr.h>
 
-SUITE(track_unique_ptr_tests)
+SUITE(unique_ptr_tests)
 {
 	using namespace rsl::track;
 
@@ -21,7 +21,7 @@ SUITE(track_unique_ptr_tests)
 		CHECK(!ptr);
 	}
 
-	TEST(multi_track_ptrs_test)
+	TEST(multi_ptrs_test)
 	{
 		auto object = make_unique<int>(10);
 
@@ -65,7 +65,7 @@ SUITE(track_unique_ptr_tests)
 		CHECK(!ptr);
 	}
 
-	TEST(array_multi_track_ptrs_test)
+	TEST(array_multi_ptrs_test)
 	{
 		auto object = make_unique<int[]>(10);
 

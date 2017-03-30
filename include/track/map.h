@@ -4,6 +4,7 @@
 #define TRACK_MAP_H
 
 #include "allocator.h"
+#include "iterator.h"
 #include <map>
 
 namespace rsl

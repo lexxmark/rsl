@@ -4,6 +4,8 @@
 #define TRACK_DEQUE_H
 
 #include "allocator.h"
+#include "iterator.h"
+#include "index.h"
 #include <deque>
 
 namespace rsl

@@ -4,6 +4,7 @@
 #define TRACK_SET_H
 
 #include "allocator.h"
+#include "iterator.h"
 #include <set>
 
 namespace rsl
