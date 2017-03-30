@@ -22,12 +22,12 @@ SUITE(array_tests)
 		array<int, 3> a;
 		a.fill(3);
 
-		auto ptr = get_ptr(a, 0);
+		auto ptr = get_ptr_at(a, 0);
 		CHECK_EQUAL(3, *ptr);
 		*ptr = 5;
 		CHECK_EQUAL(5, a[0]);
 
-		auto cptr = cget_ptr(a, 2);
+		auto cptr = cget_ptr_at(a, 2);
 		a[2] = 7;
 		CHECK_EQUAL(7, *cptr);
 	}
@@ -51,8 +51,8 @@ SUITE(array_tests)
 	{
 		auto a = std::make_unique<array<std::vector<int>, 3>>();
 
-		auto ptr1 = get_ptr(*a, 0);
-		auto ptr2 = cget_ptr(*a, 1);
+		auto ptr1 = get_ptr_at(*a, 0);
+		auto ptr2 = cget_ptr_at(*a, 1);
 		auto ptr3 = get_ptr(*a, a->begin());
 		auto ptr4 = cget_ptr(*a, a->cbegin()+2);
 
@@ -78,7 +78,7 @@ SUITE(array_tests)
 		{
 			array<ComplexObject, 3> a;
 
-			ptr1 = get_ptr(a, 1);
+			ptr1 = get_ptr_at(a, 1);
 			ptr2 = make_ptr(&ptr1->i, ptr1);
 			ptr3 = make_ptr(&ptr1->s, ptr2);
 
