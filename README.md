@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/lexxmark/ref_ptr.svg?branch=master)](https://travis-ci.org/lexxmark/ref_ptr)
+[![Build Status](https://travis-ci.org/lexxmark/rsl.svg?branch=master)](https://travis-ci.org/lexxmark/rsl)
 
-# ref_ptr
-Utility C++ class to catch dangling pointers 
+# C++ Runtime Support Library
+Runtime Support Library is a set of utility C++ classes.
+Now it has rsl::track::pointer class to avoid or catch dangling pointers.
