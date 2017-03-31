@@ -7,9 +7,9 @@
 
 struct ComplexObject
 {
-	ComplexObject(int i, std::string s)
-		: i(i),
-		s(s)
+	ComplexObject(int i_, std::string s_)
+		: i(i_),
+		s(s_)
 	{}
 
 	bool operator==(const ComplexObject& other) const
@@ -51,10 +51,10 @@ SUITE(unordered_set_tests)
 		unordered_set<std::string> a{ "a", "b", "c" };
 
 		auto ptr = get_ptr(a, a.begin());
-		CHECK_EQUAL("a", *ptr);
+		CHECK_EQUAL(*a.begin(), *ptr);
 
 		auto cptr = cget_ptr(a, ++a.cbegin());
-		CHECK_EQUAL("b", *cptr);
+		CHECK_EQUAL(*(++a.cbegin()), *cptr);
 	}
 
 	TEST(delete_unordered_set_test)
@@ -137,9 +137,9 @@ SUITE(unordered_set_tests)
 	{
 		unordered_set<int> a{ 0, 2, 4 };
 
-		auto ptr0 = cget_ptr(a, a.cbegin());
-		auto ptr1 = cget_ptr(a, ++a.cbegin());
-		auto ptr2 = cget_ptr(a, ++(++a.cbegin()));
+		auto ptr0 = cfind_ptr(a, 0);
+		auto ptr1 = cfind_ptr(a, 2);
+		auto ptr2 = cfind_ptr(a, 4);
 
 		CHECK_EQUAL(0, *ptr0);
 		CHECK_EQUAL(2, *ptr1);

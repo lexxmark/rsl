@@ -7,9 +7,9 @@
 
 struct ComplexObject
 {
-	ComplexObject(int i, std::string s)
-		: i(i),
-		s(s)
+	ComplexObject(int i_, std::string s_)
+		: i(i_),
+		s(s_)
 	{}
 
 	bool operator<(const ComplexObject& other) const

@@ -35,12 +35,13 @@ SUITE(unordered_map_tests)
 		unordered_map<std::string, int> a{ { "a", 1 },{ "b", 2 },{ "c", 3 } };
 
 		auto ptr = get_ptr(a, a.begin());
-		CHECK_EQUAL("a", ptr->first);
+		CHECK_EQUAL(a.begin()->first, ptr->first);
 		ptr->second = 4;
-		CHECK_EQUAL(4, a["a"]);
+		CHECK_EQUAL(4, a.begin()->second);
 
-		auto cptr = cget_ptr(a, ++a.cbegin());
-		a["b"] = 8;
+		auto it = ++a.begin();
+		auto cptr = cget_ptr(a, it);
+		it->second = 8;
 		CHECK_EQUAL(8, cptr->second);
 	}
 
@@ -95,7 +96,7 @@ SUITE(unordered_map_tests)
 
 		auto ptr0 = cget_ptr(a, a.cbegin());
 		auto ptr1 = cget_ptr(a, ++a.cbegin());
-		auto ptr2 = cget_ptr(a, a.find(2));
+		auto ptr2 = cget_ptr(a, ++(++a.cbegin()));
 
 		CHECK(ptr0);
 		CHECK(ptr1);
@@ -107,11 +108,11 @@ SUITE(unordered_map_tests)
 		CHECK(!ptr1);
 		CHECK(ptr2);
 
-		a.erase(a.find(2));
+		a.erase(a.cbegin());
 
-		CHECK(ptr0);
+		CHECK(!ptr0);
 		CHECK(!ptr1);
-		CHECK(!ptr2);
+		CHECK(ptr2);
 
 		a.erase(a.cbegin());
 
@@ -124,9 +125,9 @@ SUITE(unordered_map_tests)
 	{
 		unordered_map<int, int> a{ { 0, 1 },{ 2, 3 },{ 4, 5 } };
 
-		auto ptr0 = cget_ptr(a, a.cbegin());
-		auto ptr1 = cget_ptr(a, ++a.cbegin());
-		auto ptr2 = cget_ptr(a, ++(++a.cbegin()));
+		auto ptr0 = cfind_ptr(a, 0);
+		auto ptr1 = cfind_ptr(a, 2);
+		auto ptr2 = cfind_ptr(a, 4);
 
 		CHECK_EQUAL(1, ptr0->second);
 		CHECK_EQUAL(3, ptr1->second);
