@@ -16,7 +16,7 @@ namespace rsl
 		using list = std::list<T, allocator<T, Alloc>>;
 
 		template <class T, class Alloc = std::allocator<T>>
-		const auto& get_trackable(const list<T, Alloc>& lst)
+		const trackable& get_trackable(const list<T, Alloc>& lst)
 		{
 			return lst.get_allocator().get_trackable();
 		}
