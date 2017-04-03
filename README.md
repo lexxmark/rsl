@@ -50,7 +50,7 @@ rsl::track::trackable holds only one value - a pointer to a head of a chain of r
 Thus rsl::track::pointer class is a node of the two-directional list. It has pointers to previous and next nodes, pointer to the object it referencing to and one pointer used because rsl::track::pointer has virtual mathods to hide different dangling policies.
 
 ### How to use
-To you track pointers for some object A you should have rsl::track::trackable instance that lives the same period of time as the object A. You could achieve this by making rsl::track::trackable part of A or combining A and rsl::track::trackable in larger object.
+To use track pointers for some object A you should have rsl::track::trackable instance that lives the same period of time as the object A. You could achieve this by making rsl::track::trackable part of A or combining A and rsl::track::trackable in larger object.
 ```C++
 using namespace rsl::track;
 struct A
