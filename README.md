@@ -78,7 +78,7 @@ pointer<int> p2(&a.first.value, a.second);
 Also rsl library has rsl::track::allocator class that make it easy to use track pointers with standard containers (see tests as examples).
 ```C++
 rsl::track::vector<int> v{0, 1, 2};
-pointer<int> p1(&v[1], v.get_allocator().get_trackable());
+rsl::track::pointer<int> p1(&v[1], v.get_allocator().get_trackable());
 // compact version
 auto p2 = get_ptr_at(v, 1)
 ```
